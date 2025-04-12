@@ -38,6 +38,20 @@ def home():
             <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
             <script>
                 Kakao.init("f29ff24b0feeb75f41f51f0c939c0f9f");
+                function kakaoShare() {{
+                    Kakao.Link.sendDefault({{
+                        objectType: 'text',
+                        text: '{name}님의 운세는 {score}점이에요! 💖 {msg}',
+                        link: {{
+                            mobileWebUrl: window.location.href,
+                            webUrl: window.location.href
+                        }}
+                    }});
+                }}
+                function copyURL() {{
+                    navigator.clipboard.writeText(window.location.href);
+                    alert("링크가 복사되었어요! 인스타에 공유해보세요 💌");
+                }}
             </script>
             <style>
                 body {{
@@ -95,40 +109,20 @@ def home():
             </style>
         </head>
         <body>
-
             <div class="fortune-box">
                 <h2>✨ {name}님의 운세 ✨</h2>
                 <p>{today}</p>
                 <p><strong>{score}점</strong></p>
                 <p>{msg}</p>
                 <a href="/" class="btn">돌아가기</a>
-                <a class="btn" href="javascript:kakaoShare()">카카오톡</a>
+                <a class="btn" href="javascript:kakaoShare()">카카오톡 공유</a>
                 <a class="btn" onclick="copyURL()">링크복사</a>
             </div>
-
             <img class="floating" src="/image.png" style="left:5%; animation-delay: 0s;">
             <img class="floating" src="/image.png" style="left:25%; animation-delay: 4s;">
             <img class="floating" src="/image.png" style="left:45%; animation-delay: 2s;">
             <img class="floating" src="/image.png" style="left:65%; animation-delay: 6s;">
             <img class="floating" src="/image.png" style="left:85%; animation-delay: 3s;">
-
-            <script>
-                function kakaoShare() {{
-                    Kakao.Link.sendDefault({{
-                        objectType: 'text',
-                        text: '{name}님의 운세는 {score}점이에요! 💖 {msg}',
-                        link: {{
-                            mobileWebUrl: window.location.href,
-                            webUrl: window.location.href
-                        }}
-                    }});
-                }}
-
-                function copyURL() {{
-                    navigator.clipboard.writeText(window.location.href);
-                    alert("링크가 복사되었어요! 인스타에 공유해보세요 💌");
-                }}
-            </script>
         </body>
         </html>
         '''
@@ -198,63 +192,78 @@ def home():
     </head>
     <body>
         <div class="wrapper">
-            <h2>돈돈즈</h2>
+            <h2>복토리</h2>
             <form method="post" id="fortuneForm">
                 <input name="name" id="name" placeholder="이름 입력">
                 <input type="date" name="birth" id="birth">
-
                 <div class="row">
                     <button type="button" onclick="selectRadio('calendar', '양력')">양력</button>
                     <button type="button" onclick="selectRadio('calendar', '음력')">음력</button>
                 </div>
-
                 <div class="row">
                     <button type="button" onclick="selectRadio('gender', '여성')">여성</button>
                     <button type="button" onclick="selectRadio('gender', '남성')">남성</button>
                 </div>
-
                 <input type="hidden" name="gender" id="gender">
                 <input type="hidden" name="calendar" id="calendar">
-
                 <button type="submit" class="submit-btn">입력 완료</button>
             </form>
         </div>
-
         <script>
             const form = document.getElementById('fortuneForm');
             const today = new Date().toISOString().split('T')[0];
-
             window.onload = () => {
                 const saved = JSON.parse(localStorage.getItem("userData"));
                 const lastDate = localStorage.getItem("lastFortuneDate");
-
                 if (saved) {
                     document.getElementById("name").value = saved.name;
                     document.getElementById("birth").value = saved.birth;
                     document.getElementById("gender").value = saved.gender;
                     document.getElementById("calendar").value = saved.calendar;
-
                     if (lastDate === today) {
-                        alert("오늘의 운세는 이미 확인하셨어요! 내일 또 와주세요 🍀");
+                        alert(`${saved.name}님의 오늘의 운세는 이미 확인하셨어요!\n점수: ${saved.score}점`);
                         form.style.display = "none";
+                        const result = document.createElement("div");
+                        result.innerHTML = `
+                            <h3>✨ ${saved.name}님의 운세 ✨</h3>
+                            <p>${today}</p>
+                            <p><strong>${saved.score}점</strong></p>
+                            <a href="/">새로고침</a>
+                            <a class="btn" href="javascript:kakaoShare()">카카오톡 공유</a>
+                        `;
+                        document.body.appendChild(result);
                     }
                 }
             };
-
             function selectRadio(id, value) {
                 document.getElementById(id).value = value;
             }
-
             form.addEventListener("submit", () => {
                 const data = {
                     name: document.getElementById("name").value,
                     birth: document.getElementById("birth").value,
                     gender: document.getElementById("gender").value,
                     calendar: document.getElementById("calendar").value,
+                    score: Math.floor(Math.random() * 100) + 1
                 };
                 localStorage.setItem("userData", JSON.stringify(data));
                 localStorage.setItem("lastFortuneDate", today);
             });
+        </script>
+        <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+        <script>
+            Kakao.init("f29ff24b0feeb75f41f51f0c939c0f9f");
+            function kakaoShare() {
+                const saved = JSON.parse(localStorage.getItem("userData"));
+                Kakao.Link.sendDefault({
+                    objectType: 'text',
+                    text: `${saved.name}님의 운세는 ${saved.score}점이에요! 💖`,
+                    link: {
+                        mobileWebUrl: window.location.href,
+                        webUrl: window.location.href
+                    }
+                });
+            }
         </script>
     </body>
     </html>
