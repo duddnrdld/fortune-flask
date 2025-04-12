@@ -52,6 +52,16 @@ def home():
                     navigator.clipboard.writeText(window.location.href);
                     alert("링크가 복사되었어요! 인스타에 공유해보세요 💌");
                 }}
+                const today = new Date().toISOString().split('T')[0];
+                const data = {{
+                    name: "{name}",
+                    birth: "{birth}",
+                    gender: "{gender}",
+                    calendar: "{calendar}",
+                    score: {score}
+                }};
+                localStorage.setItem("userData", JSON.stringify(data));
+                localStorage.setItem("lastFortuneDate", today);
             </script>
             <style>
                 body {{
@@ -99,7 +109,7 @@ def home():
                 .floating {{
                     position: absolute;
                     width: 60px;
-                    animation: floatUp 20s linear infinite;
+                    animation: floatUp linear infinite;
                     opacity: 0.8;
                 }}
                 @keyframes floatUp {{
@@ -118,11 +128,17 @@ def home():
                 <a class="btn" href="javascript:kakaoShare()">카카오톡 공유</a>
                 <a class="btn" onclick="copyURL()">링크복사</a>
             </div>
-            <img class="floating" src="/image.png" style="left:5%; animation-delay: 0s;">
-            <img class="floating" src="/image.png" style="left:25%; animation-delay: 4s;">
-            <img class="floating" src="/image.png" style="left:45%; animation-delay: 2s;">
-            <img class="floating" src="/image.png" style="left:65%; animation-delay: 6s;">
-            <img class="floating" src="/image.png" style="left:85%; animation-delay: 3s;">
+            <script>
+                for (let i = 0; i < 10; i++) {{
+                    const img = document.createElement("img");
+                    img.src = "/image.png";
+                    img.className = "floating";
+                    img.style.left = Math.random() * 100 + "%";
+                    img.style.animationDuration = (10 + Math.random() * 20) + "s";
+                    img.style.animationDelay = Math.random() * 5 + "s";
+                    document.body.appendChild(img);
+                }}
+            </script>
         </body>
         </html>
         '''
@@ -143,6 +159,8 @@ def home():
                 justify-content: center;
                 align-items: center;
                 height: 100vh;
+                overflow: hidden;
+                position: relative;
             }
             .wrapper {
                 background-color: #eaffea;
@@ -151,6 +169,7 @@ def home():
                 width: 300px;
                 box-shadow: 0 4px 10px rgba(0,0,0,0.1);
                 text-align: center;
+                z-index: 10;
             }
             .wrapper h2 {
                 margin-bottom: 20px;
@@ -187,6 +206,16 @@ def home():
                 background-color: #ff8ea3;
                 color: white;
                 font-weight: bold;
+            }
+            .floating {
+                position: absolute;
+                width: 60px;
+                animation: floatUp linear infinite;
+                opacity: 0.8;
+            }
+            @keyframes floatUp {
+                0% { transform: translateY(100vh); }
+                100% { transform: translateY(-150px); }
             }
         </style>
     </head>
@@ -234,17 +263,27 @@ def home():
                         document.body.appendChild(result);
                     }
                 }
+                for (let i = 0; i < 10; i++) {
+                    const img = document.createElement("img");
+                    img.src = "/image.png";
+                    img.className = "floating";
+                    img.style.left = Math.random() * 100 + "%";
+                    img.style.animationDuration = (10 + Math.random() * 20) + "s";
+                    img.style.animationDelay = Math.random() * 5 + "s";
+                    document.body.appendChild(img);
+                }
             };
             function selectRadio(id, value) {
                 document.getElementById(id).value = value;
             }
             form.addEventListener("submit", () => {
+                const score = Math.floor(Math.random() * 100) + 1;
                 const data = {
                     name: document.getElementById("name").value,
                     birth: document.getElementById("birth").value,
                     gender: document.getElementById("gender").value,
                     calendar: document.getElementById("calendar").value,
-                    score: Math.floor(Math.random() * 100) + 1
+                    score: score
                 };
                 localStorage.setItem("userData", JSON.stringify(data));
                 localStorage.setItem("lastFortuneDate", today);
