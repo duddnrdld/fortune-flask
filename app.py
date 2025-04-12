@@ -71,30 +71,41 @@ def home():
                     font-family: 'Poor Story', 'Jua', sans-serif;
                     background: #fff7ed;
                     height: 100vh;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
                     position: relative;
+                }}
+                .fixed-header {{
+                    position: fixed;
+                    top: 20px;
+                    width: 100%;
+                    text-align: center;
+                    font-size: 28px;
+                    font-weight: bold;
+                    z-index: 20;
+                    color: #333;
+                    font-family: 'Jua', sans-serif;
                 }}
                 .fortune-box {{
                     background: rgba(255,255,255,0.95);
-                    padding: 30px 20px;
+                    padding: 40px 30px;
                     border-radius: 30px;
                     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
                     text-align: center;
-                    width: 80%;
-                    max-width: 320px;
+                    width: 90%;
+                    max-width: 400px;
                     z-index: 10;
+                    position: relative;
+                    top: 80px;
+                    margin: 0 auto;
                 }}
                 .fortune-box h2 {{
-                    font-size: 24px;
+                    font-size: 26px;
                     color: #aa5c5c;
-                    margin-bottom: 10px;
+                    margin-bottom: 12px;
                 }}
                 .fortune-box p {{
-                    font-size: 18px;
+                    font-size: 20px;
                     color: #5c5c5c;
-                    margin: 8px 0;
+                    margin: 10px 0;
                 }}
                 .btn {{
                     margin: 10px 5px;
@@ -106,19 +117,30 @@ def home():
                     text-decoration: none;
                     font-weight: bold;
                 }}
-                .floating {{
+                .floating, .rotating-floating {{
                     position: absolute;
                     width: 60px;
-                    animation: floatUp linear infinite;
                     opacity: 0.8;
+                    pointer-events: none;
+                }}
+                .floating {{
+                    animation: floatUp linear infinite;
+                }}
+                .rotating-floating {{
+                    animation: floatRotate linear infinite;
                 }}
                 @keyframes floatUp {{
                     0% {{ transform: translateY(100vh); }}
                     100% {{ transform: translateY(-150px); }}
                 }}
+                @keyframes floatRotate {{
+                    0% {{ transform: translateY(100vh) rotate(0deg); }}
+                    100% {{ transform: translateY(-150px) rotate(360deg); }}
+                }}
             </style>
         </head>
         <body>
+            <div class="fixed-header">복토리</div>
             <div class="fortune-box">
                 <h2>✨ {name}님의 운세 ✨</h2>
                 <p>{today}</p>
@@ -129,184 +151,20 @@ def home():
                 <a class="btn" onclick="copyURL()">링크복사</a>
             </div>
             <script>
-                for (let i = 0; i < 10; i++) {{
+                for (let i = 0; i < 20; i++) {{
                     const img = document.createElement("img");
                     img.src = "/image.png";
-                    img.className = "floating";
+                    img.className = i < 10 ? "floating" : "rotating-floating";
                     img.style.left = Math.random() * 100 + "%";
-                    img.style.animationDuration = (10 + Math.random() * 20) + "s";
-                    img.style.animationDelay = Math.random() * 5 + "s";
+                    img.style.zIndex = 1;
+                    img.style.animationDuration = (15 + Math.random() * 15) + "s";
+                    img.style.animationDelay = Math.random() * 10 + "s";
                     document.body.appendChild(img);
                 }}
             </script>
         </body>
         </html>
-        '''
-
-    return '''
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap" rel="stylesheet">
-        <style>
-            body {
-                background-color: #ffeef2;
-                font-family: 'Poor Story', 'Jua', sans-serif;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                overflow: hidden;
-                position: relative;
-            }
-            .wrapper {
-                background-color: #eaffea;
-                border-radius: 30px;
-                padding: 30px 20px;
-                width: 300px;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-                text-align: center;
-                z-index: 10;
-            }
-            .wrapper h2 {
-                margin-bottom: 20px;
-                font-size: 24px;
-                color: #444;
-            }
-            input {
-                width: 100%;
-                padding: 10px;
-                margin-top: 10px;
-                font-size: 16px;
-                border: none;
-                border-radius: 20px;
-                background-color: #fff;
-                text-align: center;
-            }
-            .row {
-                display: flex;
-                justify-content: space-between;
-                margin-top: 10px;
-            }
-            .row button {
-                flex: 1;
-                margin: 0 5px;
-                padding: 10px;
-                border-radius: 20px;
-                border: none;
-                background-color: #fff;
-                font-size: 16px;
-                color: #555;
-            }
-            .submit-btn {
-                margin-top: 20px;
-                background-color: #ff8ea3;
-                color: white;
-                font-weight: bold;
-            }
-            .floating {
-                position: absolute;
-                width: 60px;
-                animation: floatUp linear infinite;
-                opacity: 0.8;
-            }
-            @keyframes floatUp {
-                0% { transform: translateY(100vh); }
-                100% { transform: translateY(-150px); }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="wrapper">
-            <h2>복토리</h2>
-            <form method="post" id="fortuneForm">
-                <input name="name" id="name" placeholder="이름 입력">
-                <input type="date" name="birth" id="birth">
-                <div class="row">
-                    <button type="button" onclick="selectRadio('calendar', '양력')">양력</button>
-                    <button type="button" onclick="selectRadio('calendar', '음력')">음력</button>
-                </div>
-                <div class="row">
-                    <button type="button" onclick="selectRadio('gender', '여성')">여성</button>
-                    <button type="button" onclick="selectRadio('gender', '남성')">남성</button>
-                </div>
-                <input type="hidden" name="gender" id="gender">
-                <input type="hidden" name="calendar" id="calendar">
-                <button type="submit" class="submit-btn">입력 완료</button>
-            </form>
-        </div>
-        <script>
-            const form = document.getElementById('fortuneForm');
-            const today = new Date().toISOString().split('T')[0];
-            window.onload = () => {
-                const saved = JSON.parse(localStorage.getItem("userData"));
-                const lastDate = localStorage.getItem("lastFortuneDate");
-                if (saved) {
-                    document.getElementById("name").value = saved.name;
-                    document.getElementById("birth").value = saved.birth;
-                    document.getElementById("gender").value = saved.gender;
-                    document.getElementById("calendar").value = saved.calendar;
-                    if (lastDate === today) {
-                        alert(`${saved.name}님의 오늘의 운세는 이미 확인하셨어요!\n점수: ${saved.score}점`);
-                        form.style.display = "none";
-                        const result = document.createElement("div");
-                        result.innerHTML = `
-                            <h3>✨ ${saved.name}님의 운세 ✨</h3>
-                            <p>${today}</p>
-                            <p><strong>${saved.score}점</strong></p>
-                            <a href="/">새로고침</a>
-                            <a class="btn" href="javascript:kakaoShare()">카카오톡 공유</a>
-                        `;
-                        document.body.appendChild(result);
-                    }
-                }
-                for (let i = 0; i < 10; i++) {
-                    const img = document.createElement("img");
-                    img.src = "/image.png";
-                    img.className = "floating";
-                    img.style.left = Math.random() * 100 + "%";
-                    img.style.animationDuration = (10 + Math.random() * 20) + "s";
-                    img.style.animationDelay = Math.random() * 5 + "s";
-                    document.body.appendChild(img);
-                }
-            };
-            function selectRadio(id, value) {
-                document.getElementById(id).value = value;
-            }
-            form.addEventListener("submit", () => {
-                const score = Math.floor(Math.random() * 100) + 1;
-                const data = {
-                    name: document.getElementById("name").value,
-                    birth: document.getElementById("birth").value,
-                    gender: document.getElementById("gender").value,
-                    calendar: document.getElementById("calendar").value,
-                    score: score
-                };
-                localStorage.setItem("userData", JSON.stringify(data));
-                localStorage.setItem("lastFortuneDate", today);
-            });
-        </script>
-        <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-        <script>
-            Kakao.init("f29ff24b0feeb75f41f51f0c939c0f9f");
-            function kakaoShare() {
-                const saved = JSON.parse(localStorage.getItem("userData"));
-                Kakao.Link.sendDefault({
-                    objectType: 'text',
-                    text: `${saved.name}님의 운세는 ${saved.score}점이에요! 💖`,
-                    link: {
-                        mobileWebUrl: window.location.href,
-                        webUrl: window.location.href
-                    }
-                });
-            }
-        </script>
-    </body>
-    </html>
-    '''
+        '
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
