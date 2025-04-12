@@ -26,7 +26,7 @@ def home():
 
         return f"<h2>{name}님의 운세 ({today})</h2><p>{score}점: {msg}</p>"
 
-   return '''
+    return '''
 <!DOCTYPE html>
 <html>
 <head>
@@ -89,7 +89,7 @@ def home():
     </script>
 </body>
 </html>
-'''
+    '''
 
 
 if __name__ == "__main__":
