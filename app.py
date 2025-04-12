@@ -102,7 +102,7 @@ def home():
         '''
 
     else:
-        return '''
+        return f'''
         <!DOCTYPE html>
         <html>
         <head>
@@ -111,34 +111,28 @@ def home():
             <title>복토리 운세입력</title>
             <link href="https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap" rel="stylesheet">
             <style>
-                body {{ margin: 0; padding: 0; overflow: hidden; font-family: 'Poor Story', 'Jua', sans-serif; background: linear-gradient(#ffeef2, #eaffea); height: 100vh; display: flex; justify-content: center; align-items: center; position: relative; }}
+                body {{ margin: 0; padding: 0; overflow: hidden; font-family: 'Poor Story', 'Jua', sans-serif; background: #fff7ed; height: 100vh; position: relative; }}
                 .fixed-header {{ position: fixed; top: 20px; width: 100%; text-align: center; font-size: 28px; font-weight: bold; z-index: 20; color: #333; font-family: 'Jua', sans-serif; }}
-                .wrapper {{ background-color: #ffffffdd; border-radius: 30px; padding: 30px 20px; width: 300px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; z-index: 10; }}
-                input {{ width: 100%; padding: 10px; margin-top: 10px; font-size: 16px; border: none; border-radius: 20px; background-color: #fff; text-align: center; }}
-                .row {{ display: flex; justify-content: space-between; margin-top: 10px; }}
-                .row button {{ flex: 1; margin: 0 5px; padding: 10px; border-radius: 20px; border: none; background-color: #fff; font-size: 16px; color: #555; }}
-                .submit-btn {{ margin-top: 20px; background-color: #ff8ea3; color: white; font-weight: bold; }}
+                .form-box {{ background: rgba(255,255,255,0.95); padding: 40px 30px; border-radius: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; width: 90%; max-width: 400px; z-index: 10; position: relative; top: 80px; margin: 0 auto; }}
+                input, button {{ width: 100%; padding: 10px; margin-top: 10px; font-size: 16px; border-radius: 20px; border: none; }}
+                button {{ background-color: #ff9caa; color: white; font-weight: bold; cursor: pointer; }}
                 .rotating-floating {{ position: absolute; width: 60px; opacity: 0.8; pointer-events: none; animation: floatRotate linear infinite; }}
                 @keyframes floatRotate {{ 0% {{ transform: translateY(100vh) rotate(0deg); }} 100% {{ transform: translateY(-150px) rotate(360deg); }} }}
             </style>
         </head>
         <body>
             <div class="fixed-header">복토리</div>
-            <div class="wrapper">
+            <div class="form-box">
                 <form method="post" id="fortuneForm">
                     <input name="name" id="name" placeholder="이름 입력">
                     <input type="date" name="birth" id="birth">
-                    <div class="row">
-                        <button type="button" onclick="selectRadio('calendar', '양력')">양력</button>
-                        <button type="button" onclick="selectRadio('calendar', '음력')">음력</button>
-                    </div>
-                    <div class="row">
-                        <button type="button" onclick="selectRadio('gender', '여성')">여성</button>
-                        <button type="button" onclick="selectRadio('gender', '남성')">남성</button>
-                    </div>
-                    <input type="hidden" name="gender" id="gender">
-                    <input type="hidden" name="calendar" id="calendar">
-                    <button type="submit" class="submit-btn">입력 완료</button>
+                    <select name="calendar" id="calendar">
+                        <option>양력</option><option>음력</option>
+                    </select>
+                    <select name="gender" id="gender">
+                        <option>여성</option><option>남성</option>
+                    </select>
+                    <button type="submit">입력 완료</button>
                 </form>
             </div>
             <script>
@@ -168,7 +162,6 @@ def home():
                         document.body.appendChild(img);
                     }}
                 }}
-                function selectRadio(id, value) {{ document.getElementById(id).value = value; }}
                 form.addEventListener("submit", () => {{
                     const score = Math.floor(Math.random() * 100) + 1;
                     const data = {{
