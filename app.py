@@ -19,8 +19,13 @@ def home():
         gender = request.form.get("gender")
         calendar = request.form.get("calendar")
         today = str(date.today())
-        score = random.randint(1, 100)
+        score_str = request.form.get("score")
+        if score_str and score_str.strip() != "":
+            score = int(score_str)
+        else:
+            score = random.randint(1, 100)
 
+        # 운세 메세지 설정
         if score <= 20:
             msg = "오늘은 조심이 필요해요."
         elif score <= 50:
@@ -51,10 +56,13 @@ def home():
                         }}
                     }});
                 }}
-                function copyURL() {{
-                    navigator.clipboard.writeText(window.location.href);
-                    alert("링크가 복사되었어요! 인스타에 공유해보세요 💌");
+                function recalculateFortune() {{
+                    // localStorage 데이터 삭제 후 입력 화면으로 이동
+                    localStorage.removeItem("userData");
+                    localStorage.removeItem("lastFortuneDate");
+                    window.location.href = "/";
                 }}
+                // 저장된 데이터가 있다면 다시 보여줄 수 있도록 localStorage에 다시 저장.
                 const today = new Date().toISOString().split('T')[0];
                 const data = {{
                     name: "{name}",
@@ -74,7 +82,10 @@ def home():
                 .fortune-box p {{ font-size: 20px; color: #5c5c5c; margin: 10px 0; }}
                 .btn {{ margin: 10px 5px; display: inline-block; padding: 10px 16px; background-color: #ff9caa; color: white; border-radius: 20px; text-decoration: none; font-weight: bold; }}
                 .rotating-floating {{ position: absolute; width: 60px; opacity: 0.8; pointer-events: none; animation: floatRotate linear infinite; }}
-                @keyframes floatRotate {{ 0% {{ transform: translateY(100vh) rotate(0deg); }} 100% {{ transform: translateY(-150px) rotate(360deg); }} }}
+                @keyframes floatRotate {{ 
+                    0% {{ transform: translateY(100vh) rotate(0deg); }} 
+                    100% {{ transform: translateY(-150px) rotate(360deg); }} 
+                }}
             </style>
         </head>
         <body>
@@ -84,9 +95,8 @@ def home():
                 <p>{today}</p>
                 <p><strong>{score}점</strong></p>
                 <p>{msg}</p>
-                <a href="/" class="btn">돌아가기</a>
-                <a class="btn" href="javascript:kakaoShare()">카카오톡 공유</a>
-                <a class="btn" onclick="copyURL()">링크복사</a>
+                <a class="btn" href="javascript:kakaoShare()">카카오톡 공유하기</a>
+                <a class="btn" href="javascript:recalculateFortune()">오늘의 운세 다시 점쳐보기</a>
             </div>
             <script>
                 for (let i = 0; i < 30; i++) {{
@@ -104,7 +114,7 @@ def home():
         </html>
         '''
 
-    # GET 요청: 입력 화면 (fortune-box 디자인을 입력폼에도 적용)
+    # GET 요청: 입력 화면
     return '''
     <!DOCTYPE html>
     <html>
@@ -143,6 +153,8 @@ def home():
                     <option>여성</option>
                     <option>남성</option>
                 </select>
+                <!-- 기존 점수가 있으면 서버로 전달하기 위한 히든 필드 -->
+                <input type="hidden" name="score" id="score" value="">
                 <button type="submit" class="btn">입력 완료</button>
             </form>
         </div>
@@ -152,15 +164,10 @@ def home():
             window.onload = () => {
                 const saved = JSON.parse(localStorage.getItem("userData"));
                 const lastDate = localStorage.getItem("lastFortuneDate");
-                if (saved) {
-                    document.getElementById("name").value = saved.name;
-                    document.getElementById("birth").value = saved.birth;
-                    document.getElementById("gender").value = saved.gender;
-                    document.getElementById("calendar").value = saved.calendar;
-                    if (lastDate === today) {
-                        alert(`${saved.name}님의 오늘의 운세는 이미 확인하셨어요!\\n점수: ${saved.score}점`);
-                        form.style.display = "none";
-                    }
+                if (saved && lastDate === today) {
+                    // 이미 오늘의 운세를 점친 경우 폼을 숨김 (또는 다른 안내 후 재점칠 수 있음)
+                    alert(`${saved.name}님의 오늘의 운세는 이미 확인하셨어요!\\n점수: ${saved.score}점`);
+                    form.style.display = "none";
                 }
                 for (let i = 0; i < 30; i++) {
                     const img = document.createElement("img");
@@ -173,17 +180,24 @@ def home():
                     document.body.appendChild(img);
                 }
             }
-            form.addEventListener("submit", () => {
-                const score = Math.floor(Math.random() * 100) + 1;
-                const data = {
-                    name: document.getElementById("name").value,
-                    birth: document.getElementById("birth").value,
-                    gender: document.getElementById("gender").value,
-                    calendar: document.getElementById("calendar").value,
-                    score: score
-                };
-                localStorage.setItem("userData", JSON.stringify(data));
-                localStorage.setItem("lastFortuneDate", today);
+            form.addEventListener("submit", (e) => {
+                // 만약 이미 오늘 운세가 저장되어 있다면 그 점수를 전달
+                const saved = JSON.parse(localStorage.getItem("userData"));
+                if (saved && localStorage.getItem("lastFortuneDate") === today) {
+                    document.getElementById("score").value = saved.score;
+                } else {
+                    const newScore = Math.floor(Math.random() * 100) + 1;
+                    document.getElementById("score").value = newScore;
+                    const data = {
+                        name: document.getElementById("name").value,
+                        birth: document.getElementById("birth").value,
+                        gender: document.getElementById("gender").value,
+                        calendar: document.getElementById("calendar").value,
+                        score: newScore
+                    };
+                    localStorage.setItem("userData", JSON.stringify(data));
+                    localStorage.setItem("lastFortuneDate", today);
+                }
             });
         </script>
     </body>
