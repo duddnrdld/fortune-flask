@@ -70,10 +70,7 @@ def home():
                 .fortune-box h2 {{ font-size: 26px; color: #aa5c5c; margin-bottom: 12px; }}
                 .fortune-box p {{ font-size: 20px; color: #5c5c5c; margin: 10px 0; }}
                 .btn {{ margin: 10px 5px; display: inline-block; padding: 10px 16px; background-color: #ff9caa; color: white; border-radius: 20px; text-decoration: none; font-weight: bold; }}
-                .floating, .rotating-floating {{ position: absolute; width: 60px; opacity: 0.8; pointer-events: none; }}
-                .floating {{ animation: floatUp linear infinite; }}
-                .rotating-floating {{ animation: floatRotate linear infinite; }}
-                @keyframes floatUp {{ 0% {{ transform: translateY(100vh); }} 100% {{ transform: translateY(-150px); }} }}
+                .rotating-floating {{ position: absolute; width: 60px; opacity: 0.8; pointer-events: none; animation: floatRotate linear infinite; }}
                 @keyframes floatRotate {{ 0% {{ transform: translateY(100vh) rotate(0deg); }} 100% {{ transform: translateY(-150px) rotate(360deg); }} }}
             </style>
         </head>
@@ -89,10 +86,10 @@ def home():
                 <a class="btn" onclick="copyURL()">링크복사</a>
             </div>
             <script>
-                for (let i = 0; i < 20; i++) {{
+                for (let i = 0; i < 30; i++) {{
                     const img = document.createElement("img");
                     img.src = "/image.png";
-                    img.className = i < 10 ? "floating" : "rotating-floating";
+                    img.className = "rotating-floating";
                     img.style.left = Math.random() * 100 + "%";
                     img.style.zIndex = 1;
                     img.style.animationDuration = (15 + Math.random() * 15) + "s";
@@ -114,17 +111,14 @@ def home():
             <title>복토리 운세입력</title>
             <link href="https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap" rel="stylesheet">
             <style>
-                body {{ margin: 0; padding: 0; overflow: hidden; font-family: 'Poor Story', 'Jua', sans-serif; background-color: #ffeef2; height: 100vh; display: flex; justify-content: center; align-items: center; position: relative; }}
+                body {{ margin: 0; padding: 0; overflow: hidden; font-family: 'Poor Story', 'Jua', sans-serif; background: linear-gradient(#ffeef2, #eaffea); height: 100vh; display: flex; justify-content: center; align-items: center; position: relative; }}
                 .fixed-header {{ position: fixed; top: 20px; width: 100%; text-align: center; font-size: 28px; font-weight: bold; z-index: 20; color: #333; font-family: 'Jua', sans-serif; }}
-                .wrapper {{ background-color: #eaffea; border-radius: 30px; padding: 30px 20px; width: 300px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; z-index: 10; }}
+                .wrapper {{ background-color: #ffffffdd; border-radius: 30px; padding: 30px 20px; width: 300px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; z-index: 10; }}
                 input {{ width: 100%; padding: 10px; margin-top: 10px; font-size: 16px; border: none; border-radius: 20px; background-color: #fff; text-align: center; }}
                 .row {{ display: flex; justify-content: space-between; margin-top: 10px; }}
                 .row button {{ flex: 1; margin: 0 5px; padding: 10px; border-radius: 20px; border: none; background-color: #fff; font-size: 16px; color: #555; }}
                 .submit-btn {{ margin-top: 20px; background-color: #ff8ea3; color: white; font-weight: bold; }}
-                .floating, .rotating-floating {{ position: absolute; width: 60px; opacity: 0.8; pointer-events: none; }}
-                .floating {{ animation: floatUp linear infinite; }}
-                .rotating-floating {{ animation: floatRotate linear infinite; }}
-                @keyframes floatUp {{ 0% {{ transform: translateY(100vh); }} 100% {{ transform: translateY(-150px); }} }}
+                .rotating-floating {{ position: absolute; width: 60px; opacity: 0.8; pointer-events: none; animation: floatRotate linear infinite; }}
                 @keyframes floatRotate {{ 0% {{ transform: translateY(100vh) rotate(0deg); }} 100% {{ transform: translateY(-150px) rotate(360deg); }} }}
             </style>
         </head>
@@ -163,10 +157,10 @@ def home():
                             form.style.display = "none";
                         }}
                     }}
-                    for (let i = 0; i < 20; i++) {{
+                    for (let i = 0; i < 30; i++) {{
                         const img = document.createElement("img");
                         img.src = "/image.png";
-                        img.className = i < 10 ? "floating" : "rotating-floating";
+                        img.className = "rotating-floating";
                         img.style.left = Math.random() * 100 + "%";
                         img.style.zIndex = 1;
                         img.style.animationDuration = (15 + Math.random() * 15) + "s";
@@ -174,9 +168,7 @@ def home():
                         document.body.appendChild(img);
                     }}
                 }}
-                function selectRadio(id, value) {{
-                    document.getElementById(id).value = value;
-                }}
+                function selectRadio(id, value) {{ document.getElementById(id).value = value; }}
                 form.addEventListener("submit", () => {{
                     const score = Math.floor(Math.random() * 100) + 1;
                     const data = {{
