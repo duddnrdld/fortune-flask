@@ -116,8 +116,8 @@ def home():
             body {{ margin: 0; padding: 0; overflow: hidden; font-family: 'Poor Story', 'Jua', sans-serif; background: #fff7ed; height: 100vh; position: relative; }}
             .fixed-header {{ position: fixed; top: 20px; width: 100%; text-align: center; font-size: 28px; font-weight: bold; z-index: 20; color: #333; font-family: 'Jua', sans-serif; }}
             .form-box {{ background: rgba(255,255,255,0.95); padding: 40px 30px; border-radius: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; width: 90%; max-width: 400px; z-index: 10; position: relative; top: 80px; margin: 0 auto; }}
-            input, button, select {{ width: 100%; padding: 10px; margin-top: 10px; font-size: 16px; border-radius: 20px; border: none; }}
-            button {{ background-color: #ff9caa; color: white; font-weight: bold; cursor: pointer; }}
+            .form-box input, .form-box select, .form-box button {{ width: 100%; padding: 12px; margin-top: 12px; font-size: 16px; border-radius: 20px; border: none; box-shadow: inset 0 0 5px rgba(0,0,0,0.05); }}
+            .form-box button {{ background-color: #ff9caa; color: white; font-weight: bold; cursor: pointer; }}
             .rotating-floating {{ position: absolute; width: 60px; opacity: 0.8; pointer-events: none; animation: floatRotate linear infinite; }}
             @keyframes floatRotate {{ 0% {{ transform: translateY(100vh) rotate(0deg); }} 100% {{ transform: translateY(-150px) rotate(360deg); }} }}
         </style>
