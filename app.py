@@ -1,8 +1,12 @@
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from datetime import date
 import random
 
 app = Flask(__name__)
+
+@app.route("/image.png")
+def serve_image():
+    return send_from_directory(".", "image.png")
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -12,7 +16,6 @@ def home():
         gender = request.form.get("gender")
         calendar = request.form.get("calendar")
         today = str(date.today())
-
         score = random.randint(1, 100)
 
         if score <= 20:
@@ -25,9 +28,109 @@ def home():
             msg = "행운이 가득한 하루가 될 거예요!"
 
         return f'''
-        <h2>{name}님의 운세 ({today})</h2>
-        <p>{score}점: {msg}</p>
-        <a href="/">돌아가기</a>
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>오늘의 운세</title>
+            <link href="https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap" rel="stylesheet">
+            <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+            <script>
+                Kakao.init("f29ff24b0feeb75f41f51f0c939c0f9f");
+            </script>
+            <style>
+                body {{
+                    margin: 0;
+                    padding: 0;
+                    overflow: hidden;
+                    font-family: 'Poor Story', 'Jua', sans-serif;
+                    background: #fff7ed;
+                    height: 100vh;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    position: relative;
+                }}
+                .fortune-box {{
+                    background: rgba(255,255,255,0.95);
+                    padding: 30px 20px;
+                    border-radius: 30px;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                    text-align: center;
+                    width: 80%;
+                    max-width: 320px;
+                    z-index: 10;
+                }}
+                .fortune-box h2 {{
+                    font-size: 24px;
+                    color: #aa5c5c;
+                    margin-bottom: 10px;
+                }}
+                .fortune-box p {{
+                    font-size: 18px;
+                    color: #5c5c5c;
+                    margin: 8px 0;
+                }}
+                .btn {{
+                    margin: 10px 5px;
+                    display: inline-block;
+                    padding: 10px 16px;
+                    background-color: #ff9caa;
+                    color: white;
+                    border-radius: 20px;
+                    text-decoration: none;
+                    font-weight: bold;
+                }}
+                .floating {{
+                    position: absolute;
+                    width: 60px;
+                    animation: floatUp 20s linear infinite;
+                    opacity: 0.8;
+                }}
+                @keyframes floatUp {{
+                    0% {{ transform: translateY(100vh); }}
+                    100% {{ transform: translateY(-150px); }}
+                }}
+            </style>
+        </head>
+        <body>
+
+            <div class="fortune-box">
+                <h2>✨ {name}님의 운세 ✨</h2>
+                <p>{today}</p>
+                <p><strong>{score}점</strong></p>
+                <p>{msg}</p>
+                <a href="/" class="btn">돌아가기</a>
+                <a class="btn" href="javascript:kakaoShare()">카카오톡</a>
+                <a class="btn" onclick="copyURL()">링크복사</a>
+            </div>
+
+            <img class="floating" src="/image.png" style="left:5%; animation-delay: 0s;">
+            <img class="floating" src="/image.png" style="left:25%; animation-delay: 4s;">
+            <img class="floating" src="/image.png" style="left:45%; animation-delay: 2s;">
+            <img class="floating" src="/image.png" style="left:65%; animation-delay: 6s;">
+            <img class="floating" src="/image.png" style="left:85%; animation-delay: 3s;">
+
+            <script>
+                function kakaoShare() {{
+                    Kakao.Link.sendDefault({{
+                        objectType: 'text',
+                        text: '{name}님의 운세는 {score}점이에요! 💖 {msg}',
+                        link: {{
+                            mobileWebUrl: window.location.href,
+                            webUrl: window.location.href
+                        }}
+                    }});
+                }}
+
+                function copyURL() {{
+                    navigator.clipboard.writeText(window.location.href);
+                    alert("링크가 복사되었어요! 인스타에 공유해보세요 💌");
+                }}
+            </script>
+        </body>
+        </html>
         '''
 
     return '''
@@ -35,10 +138,11 @@ def home():
     <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap" rel="stylesheet">
         <style>
             body {
                 background-color: #ffeef2;
-                font-family: 'Arial', sans-serif;
+                font-family: 'Poor Story', 'Jua', sans-serif;
                 margin: 0;
                 padding: 0;
                 display: flex;
@@ -59,7 +163,7 @@ def home():
                 font-size: 24px;
                 color: #444;
             }
-            input, select {
+            input {
                 width: 100%;
                 padding: 10px;
                 margin-top: 10px;
@@ -120,7 +224,6 @@ def home():
             const form = document.getElementById('fortuneForm');
             const today = new Date().toISOString().split('T')[0];
 
-            // 1. 저장된 정보 불러오기
             window.onload = () => {
                 const saved = JSON.parse(localStorage.getItem("userData"));
                 const lastDate = localStorage.getItem("lastFortuneDate");
@@ -132,18 +235,16 @@ def home():
                     document.getElementById("calendar").value = saved.calendar;
 
                     if (lastDate === today) {
-                        alert("오늘의 운세는 이미 확인하셨습니다.");
+                        alert("오늘의 운세는 이미 확인하셨어요! 내일 또 와주세요 🍀");
                         form.style.display = "none";
                     }
                 }
             };
 
-            // 2. 선택 버튼 누르면 값 저장
             function selectRadio(id, value) {
                 document.getElementById(id).value = value;
             }
 
-            // 3. 제출 시 사용자 정보 저장
             form.addEventListener("submit", () => {
                 const data = {
                     name: document.getElementById("name").value,
