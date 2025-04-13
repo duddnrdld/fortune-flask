@@ -35,12 +35,12 @@ def greeting():
                 overflow: hidden;
             }}
             .central-image {{
-                width: 200px; /* 원래 60px의 2배 크기 */
+                width: 120px; /* 원래 이미지 60px의 2배 크기 */
                 z-index: 10;
             }}
             .speech-bubble {{
                 position: absolute;
-                top: 30%;
+                top: 20%;  /* 말풍선을 화면 상단으로 좀 더 이동 (이전: 30%) */
                 left: 50%;
                 transform: translateX(-50%);
                 background: white;
@@ -114,6 +114,7 @@ def greeting():
     </body>
     </html>
     '''
+
 
 # 2. 회원가입/입력 화면 (/home)
 @app.route("/home", methods=["GET", "POST"])
