@@ -11,7 +11,7 @@ def serve_image():
 def home():
     today = str(date.today())
     if request.method == "POST":
-        # 회원가입 폼으로부터 전달받은 데이터 처리
+        # 회원가입 폼에서 전달받은 데이터 처리
         name = request.form.get("name", "")
         birth = request.form.get("birth", "")
         calendar = request.form.get("calendar", "")
@@ -22,7 +22,7 @@ def home():
         <head>
             <meta charset="UTF-8">
             <!-- 확대/축소 방지 -->
-            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no">
             <title>회원가입 완료</title>
         </head>
         <body>
@@ -35,7 +35,6 @@ def home():
                 }};
                 localStorage.setItem("userData", JSON.stringify(userData));
                 localStorage.setItem("hasVisited", "true");
-                // 오늘의 운세 생성은 /result 페이지에서 진행
                 location.href = "/result";
             </script>
         </body>
@@ -48,7 +47,7 @@ def home():
     <head>
         <meta charset="UTF-8">
         <!-- 확대/축소 방지 -->
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no">
         <title>복토리 운세입력</title>
         <link href="https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap" rel="stylesheet">
         <style>
@@ -86,7 +85,7 @@ def home():
                 border-radius: 30px;
                 box-shadow: 0 4px 20px rgba(0,0,0,0.1);
                 text-align: center;
-                /* 아이폰에서 좌우를 좀 더 좁게: 폭을 80%로, max-width도 줄임 */
+                /* 아이폰에서 좌우를 좀 더 좁게: 폭 80%, 최대폭 340px */
                 width: 80%;
                 max-width: 340px;
                 z-index: 10;
@@ -167,8 +166,8 @@ def home():
                 }}
             }}
             typeGreeting();
-
-            // 이미 회원가입 정보가 있으면 바로 /result 페이지로 리다이렉트
+            
+            // 회원가입 정보가 이미 있다면 바로 결과 페이지로 이동
             const saved = localStorage.getItem("userData");
             const today = "{today}";
             if (saved) {{
@@ -179,7 +178,7 @@ def home():
                     location.href = "/result";
                 }}
             }}
-            // 바둑판식으로 배치된 이미지 생성 (6열 x 5행), animationDelay 0s
+            // 바둑판식 배치의 배경 이미지 생성 (6열 x 5행), animationDelay 0s, z-index 0로 설정
             const numCols = 6;
             const numRows = 5;
             const animations = [
@@ -196,7 +195,7 @@ def home():
                 const row = Math.floor(i / numCols);
                 img.style.left = (col * (100 / numCols)) + "%";
                 img.style.top = (row * (100 / numRows)) + "%";
-                img.style.zIndex = 1;
+                img.style.zIndex = "0";
                 const animationChoice = animations[Math.floor(Math.random() * animations.length)];
                 const duration = 15 + Math.random() * 15;
                 img.style.animation = animationChoice + " " + duration + "s linear infinite";
@@ -210,7 +209,7 @@ def home():
 
 @app.route("/result")
 def result():
-    # 오늘의 운세 점수와 메세지 생성 스크립트
+    # 오늘의 운세 점수를 1~100 사이에서 랜덤 생성하고, 10단계의 메시지를 출력하는 스크립트
     script = """
         let saved = JSON.parse(localStorage.getItem("userData"));
         const today = new Date().toISOString().split('T')[0];
@@ -224,10 +223,27 @@ def result():
             localStorage.setItem("lastFortuneDate", today);
         }
         let msg = "";
-        if (score <= 20) msg = "오늘은 조심이 필요한 날이에요. 무리한 계획보다는 쉬엄쉬엄, 스스로를 돌보는 하루로 만들어봐요.";
-        else if (score <= 50) msg = "평범한 하루가 펼쳐질 거예요. 작은 기쁨이나 우연한 행운이 찾아올지도 몰라요! 마음의 여유를 가져보세요.";
-        else if (score <= 80) msg = "오늘은 좋은 기운이 가득해요! 새로운 시도를 하거나 중요한 결정을 내리기 딱 좋은 날이에요. 당신을 응원할게요.";
-        else msg = "행운이 쏟아지는 날이에요! 하는 일마다 술술 풀리고, 좋은 소식이 들릴 수 있어요. 주위 사람들과 행복을 나눠보는 것도 좋겠어요.";
+        if (score <= 10) {{
+            msg = "오늘의 점수가 1에서 10 사이로 매우 낮게 나왔습니다. 오늘은 전반적으로 운세가 부진하여 예상치 못한 어려움과 방해가 많을 수 있는 날입니다. 자신을 돌보며 작은 성공에도 감사하는 마음을 잃지 않는다면, 어려움 속에서도 배움과 성장을 기대할 수 있습니다.";
+        }} else if (score <= 20) {{
+            msg = "오늘의 점수가 11에서 20 사이로 나왔습니다. 비교적 운세가 부진한 편이나, 이는 새로운 도전을 준비할 수 있는 기회가 될 수 있습니다. 작은 실망이 오히려 더 큰 발전의 밑거름이 될 수 있으니, 차분히 상황을 받아들이고 자신감을 회복해보세요.";
+        }} else if (score <= 30) {{
+            msg = "오늘의 점수가 21에서 30 사이로 낮은 편입니다. 비록 예상보다 운세가 좋지 않을 수 있으나, 이는 자기 내면을 돌아보고 작은 변화로 개선할 수 있는 가능성을 내포하고 있습니다. 긍정적인 자세로 어려움을 극복해 나가며 새로운 기회를 모색해보세요.";
+        }} else if (score <= 40) {{
+            msg = "오늘의 점수가 31에서 40 사이로 나왔습니다. 약간의 어려움과 도전이 예상되지만, 이는 당신에게 더 깊은 경험과 성장을 가져다줄 수 있는 날입니다. 주변 사람들의 조언과 도움을 받아 한 걸음씩 나아간다면 뜻밖의 좋은 결과를 얻을 수 있을 것입니다.";
+        }} else if (score <= 50) {{
+            msg = "오늘의 점수가 41에서 50 사이로 중간 정도의 운세를 보입니다. 안정과 도전이 공존하는 하루가 예상되며, 평범해 보이는 순간 속에서도 특별한 기회가 숨어 있을 수 있습니다. 작지만 꾸준한 노력이 곧 큰 변화를 만들어낼 것입니다.";
+        }} else if (score <= 60) {{
+            msg = "오늘의 점수가 51에서 60 사이로, 약간 좋은 운세를 가진 날입니다. 작지만 의미 있는 성취를 이루며, 긍정적인 에너지가 당신의 주변을 감싸는 하루가 될 것입니다. 이번 경험을 바탕으로 더 큰 성공을 향해 나아갈 수 있는 자신감을 얻으시기 바랍니다.";
+        }} else if (score <= 70) {{
+            msg = "오늘의 점수가 61에서 70 사이로, 전반적으로 운이 따르는 날입니다. 여러모로 순조로운 일들이 벌어지며, 새로운 도전에서도 좋은 결과를 기대할 수 있습니다. 주변과의 협력과 소통이 당신에게 큰 힘이 되어 줄 것이며, 즐거운 기운이 넘치는 하루가 될 것입니다.";
+        }} else if (score <= 80) {{
+            msg = "오늘의 점수가 71에서 80 사이로 꽤 좋은 운세를 보입니다. 긍정적이고 활기찬 에너지가 넘치는 만큼, 새로운 가능성과 도전을 향한 기회가 많을 것입니다. 자신감을 가지고 미래를 향해 나아간다면 뜻깊은 성취와 발전을 경험하게 될 것입니다.";
+        }} else if (score <= 90) {{
+            msg = "오늘의 점수가 81에서 90 사이로, 매우 좋은 운세를 자랑합니다. 열정과 창의력이 넘치며, 주어진 기회를 효과적으로 활용할 수 있는 날입니다. 당신의 노력과 주변의 응원이 결합되어 놀라운 성과와 발전을 이끌어낼 수 있습니다.";
+        }} else {{
+            msg = "오늘의 점수가 91에서 100 사이로 최고 수준의 운세를 보여줍니다. 모든 일이 당신의 뜻대로 순조롭게 진행되며, 특별한 행운과 성공이 가득한 하루가 될 것입니다. 당신의 열정과 노력이 결실을 맺어, 놀라운 성취와 기쁨을 맛보게 되는 최고의 날이 될 것입니다.";
+        }}
         document.getElementById("name").innerText = saved.name;
         document.getElementById("score").innerText = score + "점";
         document.getElementById("msg").innerText = msg;
@@ -238,7 +254,7 @@ def result():
     <head>
         <meta charset="UTF-8">
         <!-- 확대/축소 방지 -->
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no">
         <title>오늘의 운세</title>
         <link href="https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap" rel="stylesheet">
         <style>
@@ -276,7 +292,7 @@ def result():
                 border-radius: 30px;
                 box-shadow: 0 4px 20px rgba(0,0,0,0.1);
                 text-align: center;
-                /* 아이폰에서 좌우 여백을 줄임 */
+                /* 아이폰에서 좌우 여백을 조금 더 축소 */
                 width: calc(100% - 10mm);
                 max-width: 340px;
                 z-index: 10;
@@ -352,7 +368,7 @@ def result():
             typeGreeting();
 
             {script}
-            // 바둑판식으로 배치된 이미지 생성 (6열 x 5행), animationDelay 0s
+            // 바둑판식 배치된 배경 이미지 생성 (6열 x 5행), z-index 0, animationDelay 0s
             const numCols = 6;
             const numRows = 5;
             const animations = [
@@ -369,7 +385,7 @@ def result():
                 const row = Math.floor(i / numCols);
                 img.style.left = (col * (100 / numCols)) + "%";
                 img.style.top = (row * (100 / numRows)) + "%";
-                img.style.zIndex = 1;
+                img.style.zIndex = "0";
                 const animationChoice = animations[Math.floor(Math.random() * animations.length)];
                 const duration = 15 + Math.random() * 15;
                 img.style.animation = animationChoice + " " + duration + "s linear infinite";
