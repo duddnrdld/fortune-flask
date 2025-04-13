@@ -241,8 +241,10 @@ def result():
                 box-shadow: 0 4px 20px rgba(0,0,0,0.1);
                 text-align: center;
                 /* 좌우 2mm씩 줄이기 위해 전체 폭에서 4mm를 차감 */
-                width: calc(100% - 4mm);
-                max-width: calc(400px - 4mm);
+                width: calc(100% - 10mm);
+                max-width: calc(400px - 10mm);
+                margin-left: auto;
+                margin-right: auto;
                 z-index: 10;
                 position: relative;
                 top: 100px;
