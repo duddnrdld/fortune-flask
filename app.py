@@ -35,7 +35,7 @@ def greeting():
                 overflow: hidden;
             }}
             .central-image {{
-                width: 120px; /* 원래 60px의 2배 크기 */
+                width: 200px; /* 원래 60px의 2배 크기 */
                 z-index: 10;
             }}
             .speech-bubble {{
@@ -187,7 +187,7 @@ def home():
           }}
           .form-box {{
               background: rgba(255,255,255,0.95);
-              padding: 40px 30px;
+              padding: 40px 10px;
               border-radius: 30px;
               box-shadow: 0 4px 20px rgba(0,0,0,0.1);
               text-align: center;
@@ -380,7 +380,7 @@ def result():
           }}
           .fortune-box {{
               background: rgba(255,255,255,0.95);
-              padding: 40px 30px;
+              padding: 40px 10px;
               border-radius: 30px;
               box-shadow: 0 4px 20px rgba(0,0,0,0.1);
               text-align: center;
