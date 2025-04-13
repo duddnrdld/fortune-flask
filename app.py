@@ -81,7 +81,7 @@ def home():
             }}
             .form-box {{
                 background: rgba(255,255,255,0.95);
-                padding: 40px 30px;
+                padding: 40px 70px;
                 border-radius: 30px;
                 box-shadow: 0 4px 20px rgba(0,0,0,0.1);
                 text-align: center;
@@ -189,7 +189,7 @@ def home():
             ];
             for (let i = 0; i < numCols * numRows; i++) {{
                 const img = document.createElement("img");
-                background img.src = "/image.png";
+                img.src = "/image.png";
                 img.className = "rotating-floating";
                 const col = i % numCols;
                 const row = Math.floor(i / numCols);
@@ -379,7 +379,7 @@ def result():
             ];
             for (let i = 0; i < numCols * numRows; i++) {{
                 const img = document.createElement("img");
-                background img.src = "/image.png";
+                img.src = "/image.png";
                 img.className = "rotating-floating";
                 const col = i % numCols;
                 const row = Math.floor(i / numCols);
