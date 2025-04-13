@@ -170,11 +170,11 @@ def home():
                 img.style.left = (col * (100 / numCols)) + "%";
                 img.style.top = (row * (100 / numRows)) + "%";
                 img.style.zIndex = 1;
-                // 무작위 애니메이션 선택 및 지속시간/딜레이 적용
+                // 무작위 애니메이션 선택 및 지속시간 적용, delay를 0으로 고정
                 const animationChoice = animations[Math.floor(Math.random() * animations.length)];
                 const duration = 15 + Math.random() * 15;
                 img.style.animation = animationChoice + " " + duration + "s linear infinite";
-                img.style.animationDelay = Math.random() * 10 + "s";
+                img.style.animationDelay = "0s";
                 document.body.appendChild(img);
             }}
         </script>
@@ -240,8 +240,9 @@ def result():
                 border-radius: 30px;
                 box-shadow: 0 4px 20px rgba(0,0,0,0.1);
                 text-align: center;
-                width: 90%;
-                max-width: 400px;
+                /* 좌우 2mm씩 줄이기 위해 전체 폭에서 4mm를 차감 */
+                width: calc(100% - 4mm);
+                max-width: calc(400px - 4mm);
                 z-index: 10;
                 position: relative;
                 top: 100px;
@@ -319,7 +320,7 @@ def result():
                 const animationChoice = animations[Math.floor(Math.random() * animations.length)];
                 const duration = 15 + Math.random() * 15;
                 img.style.animation = animationChoice + " " + duration + "s linear infinite";
-                img.style.animationDelay = Math.random() * 10 + "s";
+                img.style.animationDelay = "0s";
                 document.body.appendChild(img);
             }}
         </script>
