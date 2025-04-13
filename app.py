@@ -211,7 +211,7 @@ def result():
     <html>
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
         <title>오늘의 운세</title>
         <link href="https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap" rel="stylesheet">
         <style>
@@ -235,21 +235,21 @@ def result():
                 color: #333;
             }}
             .fortune-box {{
+                width: calc(100vw - 20px);        /* 좌우 10px씩 여백 */
+                max-width: 360px;                 /* 고정 최대폭 */
+                margin: 0 auto;                   /* 가운데 정렬 */
                 background: rgba(255,255,255,0.95);
                 padding: 40px 30px;
                 border-radius: 30px;
                 box-shadow: 0 4px 20px rgba(0,0,0,0.1);
                 text-align: center;
                 /* 좌우 2mm씩 줄이기 위해 전체 폭에서 4mm를 차감 */
-                width: calc(100% - 10mm);
-                max-width: calc(400px - 10mm);
                 margin-left: auto;
                 margin-right: auto;
                 z-index: 10;
                 position: relative;
                 top: 100px;
-                margin: 0 auto;
-            }}
+                }}
             .fortune-box h2 {{
                 font-size: 20px;
                 color: #999;
