@@ -21,7 +21,8 @@ def home():
         <html>
         <head>
             <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <!-- 확대/축소 방지 -->
+            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
             <title>회원가입 완료</title>
         </head>
         <body>
@@ -41,13 +42,13 @@ def home():
         </html>
         '''
 
-    # GET 또는 HEAD 요청 시, localStorage에 회원가입 정보가 있을 경우 바로 /result 페이지로 이동
     return f'''
     <!DOCTYPE html>
     <html>
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- 확대/축소 방지 -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
         <title>복토리 운세입력</title>
         <link href="https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap" rel="stylesheet">
         <style>
@@ -70,18 +71,26 @@ def home():
                 z-index: 20;
                 color: #333;
             }}
+            .greeting {{
+                position: fixed;
+                top: 60px;
+                width: 100%;
+                text-align: center;
+                font-size: 20px;
+                color: #333;
+                z-index: 30;
+            }}
             .form-box {{
                 background: rgba(255,255,255,0.95);
                 padding: 40px 30px;
                 border-radius: 30px;
                 box-shadow: 0 4px 20px rgba(0,0,0,0.1);
                 text-align: center;
-                width: 90%;
-                max-width: 400px;
+                /* 아이폰에서 좌우를 좀 더 좁게: 폭을 80%로, max-width도 줄임 */
+                width: 80%;
+                max-width: 340px;
                 z-index: 10;
-                position: relative;
-                top: 80px;
-                margin: 0 auto;
+                margin: 120px auto;
             }}
             input, select, button {{
                 width: 100%;
@@ -124,6 +133,7 @@ def home():
     </head>
     <body>
         <div class="fixed-header">복토리</div>
+        <div class="greeting" id="greeting"></div>
         <div class="form-box">
             <form method="post">
                 <input name="name" id="name" placeholder="이름 입력" required>
@@ -140,18 +150,36 @@ def home():
             </form>
         </div>
         <script>
-            // 이미 회원가입된 경우 바로 /result 페이지로 리다이렉트
+            // 인삿말 타이핑 애니메이션 (계속 반복)
+            const greetingText = "안녕하세요 주인님! 오늘도 방문해 주셔서 감사합니다!";
+            let greetingIndex = 0;
+            function typeGreeting() {{
+                const greetingElem = document.getElementById("greeting");
+                greetingElem.innerText = greetingText.slice(0, greetingIndex);
+                greetingIndex++;
+                if (greetingIndex > greetingText.length) {{
+                    setTimeout(() => {{
+                        greetingIndex = 0;
+                        typeGreeting();
+                    }}, 2000);
+                }} else {{
+                    setTimeout(typeGreeting, 150);
+                }}
+            }}
+            typeGreeting();
+
+            // 이미 회원가입 정보가 있으면 바로 /result 페이지로 리다이렉트
             const saved = localStorage.getItem("userData");
+            const today = "{today}";
             if (saved) {{
                 const lastDate = localStorage.getItem("lastFortuneDate");
-                const today = "{today}";
                 if (lastDate === today) {{
                     location.href = "/result?repeat=true";
                 }} else {{
                     location.href = "/result";
                 }}
             }}
-            // 바둑판식으로 배치된 이미지 생성 (6열 x 5행)
+            // 바둑판식으로 배치된 이미지 생성 (6열 x 5행), animationDelay 0s
             const numCols = 6;
             const numRows = 5;
             const animations = [
@@ -166,11 +194,9 @@ def home():
                 img.className = "rotating-floating";
                 const col = i % numCols;
                 const row = Math.floor(i / numCols);
-                // 각 이미지를 그리드 좌표에 배치
                 img.style.left = (col * (100 / numCols)) + "%";
                 img.style.top = (row * (100 / numRows)) + "%";
                 img.style.zIndex = 1;
-                // 무작위 애니메이션 선택 및 지속시간 적용, delay를 0으로 고정
                 const animationChoice = animations[Math.floor(Math.random() * animations.length)];
                 const duration = 15 + Math.random() * 15;
                 img.style.animation = animationChoice + " " + duration + "s linear infinite";
@@ -184,7 +210,7 @@ def home():
 
 @app.route("/result")
 def result():
-    # 오늘의 운세 생성 스크립트
+    # 오늘의 운세 점수와 메세지 생성 스크립트
     script = """
         let saved = JSON.parse(localStorage.getItem("userData"));
         const today = new Date().toISOString().split('T')[0];
@@ -211,7 +237,8 @@ def result():
     <html>
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+        <!-- 확대/축소 방지 -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
         <title>오늘의 운세</title>
         <link href="https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap" rel="stylesheet">
         <style>
@@ -234,22 +261,27 @@ def result():
                 z-index: 20;
                 color: #333;
             }}
+            .greeting {{
+                position: fixed;
+                top: 60px;
+                width: 100%;
+                text-align: center;
+                font-size: 20px;
+                color: #333;
+                z-index: 30;
+            }}
             .fortune-box {{
-                width: calc(100vw - 20px);        /* 좌우 10px씩 여백 */
-                max-width: 360px;                 /* 고정 최대폭 */
-                margin: 0 auto;                   /* 가운데 정렬 */
                 background: rgba(255,255,255,0.95);
                 padding: 40px 30px;
                 border-radius: 30px;
                 box-shadow: 0 4px 20px rgba(0,0,0,0.1);
                 text-align: center;
-                /* 좌우 2mm씩 줄이기 위해 전체 폭에서 4mm를 차감 */
-                margin-left: auto;
-                margin-right: auto;
+                /* 아이폰에서 좌우 여백을 줄임 */
+                width: calc(100% - 10mm);
+                max-width: 340px;
                 z-index: 10;
-                position: relative;
-                top: 100px;
-                }}
+                margin: 120px auto;
+            }}
             .fortune-box h2 {{
                 font-size: 20px;
                 color: #999;
@@ -293,6 +325,7 @@ def result():
     </head>
     <body>
         <div class="fixed-header">복토리</div>
+        <div class="greeting" id="greeting"></div>
         <div class="fortune-box">
             <h2>오늘의 운세는 어떨까요?</h2>
             <h3>✨ <span id="name"></span>님의 운세 ✨</h3>
@@ -300,8 +333,26 @@ def result():
             <p id="msg"></p>
         </div>
         <script>
+            // 인삿말 타이핑 애니메이션 (계속 반복)
+            const greetingText = "안녕하세요 주인님! 오늘도 방문해 주셔서 감사합니다!";
+            let greetingIndex = 0;
+            function typeGreeting() {{
+                const greetingElem = document.getElementById("greeting");
+                greetingElem.innerText = greetingText.slice(0, greetingIndex);
+                greetingIndex++;
+                if (greetingIndex > greetingText.length) {{
+                    setTimeout(() => {{
+                        greetingIndex = 0;
+                        typeGreeting();
+                    }}, 2000);
+                }} else {{
+                    setTimeout(typeGreeting, 150);
+                }}
+            }}
+            typeGreeting();
+
             {script}
-            // 바둑판식으로 배치된 이미지 생성 (6열 x 5행)
+            // 바둑판식으로 배치된 이미지 생성 (6열 x 5행), animationDelay 0s
             const numCols = 6;
             const numRows = 5;
             const animations = [
