@@ -81,7 +81,7 @@ def home():
             }}
             .form-box {{
                 background: rgba(255,255,255,0.95);
-                padding: 40px 70px;
+                padding: 40px 10px;
                 border-radius: 30px;
                 box-shadow: 0 4px 20px rgba(0,0,0,0.1);
                 text-align: center;
@@ -288,7 +288,7 @@ def result():
             }}
             .fortune-box {{
                 background: rgba(255,255,255,0.95);
-                padding: 40px 70px;
+                padding: 40px 10px;
                 border-radius: 30px;
                 box-shadow: 0 4px 20px rgba(0,0,0,0.1);
                 text-align: center;
