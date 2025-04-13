@@ -11,12 +11,11 @@ def serve_image():
 def home():
     today = str(date.today())
     if request.method == "POST":
-        # 폼으로 전달된 회원가입 정보 수집
+        # 회원가입 폼으로부터 전달받은 데이터 처리
         name = request.form.get("name", "")
         birth = request.form.get("birth", "")
         calendar = request.form.get("calendar", "")
         gender = request.form.get("gender", "")
-        # 클라이언트 localStorage에 저장 후 /result 페이지로 리다이렉트하는 스크립트 포함
         return f'''
         <!DOCTYPE html>
         <html>
@@ -35,15 +34,14 @@ def home():
                 }};
                 localStorage.setItem("userData", JSON.stringify(userData));
                 localStorage.setItem("hasVisited", "true");
-                // 아직 오늘의 운세 점수는 생성하지 않으므로 lastFortuneDate는 설정하지 않음
+                // 오늘의 운세 생성은 /result 페이지에서 진행
                 location.href = "/result";
             </script>
         </body>
         </html>
         '''
 
-    # GET 또는 HEAD 방식 요청 시,
-    # 만약 회원가입 정보가 localStorage에 있다면 즉시 오늘의 운세 페이지로 리다이렉트
+    # GET 또는 HEAD 요청 시, localStorage에 회원가입 정보가 있을 경우 바로 /result 페이지로 이동
     return f'''
     <!DOCTYPE html>
     <html>
@@ -53,13 +51,75 @@ def home():
         <title>복토리 운세입력</title>
         <link href="https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap" rel="stylesheet">
         <style>
-            body {{ margin: 0; padding: 0; overflow: hidden; font-family: 'Poor Story', 'Jua', sans-serif; background: #fff7ed; height: 100vh; position: relative; }}
-            .fixed-header {{ position: fixed; top: 20px; width: 100%; text-align: center; font-size: 28px; font-weight: bold; z-index: 20; color: #333; }}
-            .form-box {{ background: rgba(255,255,255,0.95); padding: 40px 30px; border-radius: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; width: 90%; max-width: 400px; z-index: 10; position: relative; top: 80px; margin: 0 auto; }}
-            input, select, button {{ width: 100%; padding: 12px; margin-top: 12px; font-size: 16px; border-radius: 20px; border: none; }}
-            button {{ background-color: #ff9caa; color: white; font-weight: bold; cursor: pointer; }}
-            .rotating-floating {{ position: absolute; width: 60px; opacity: 0.8; pointer-events: none; animation: floatRotate linear infinite; }}
-            @keyframes floatRotate {{ 0% {{ transform: translateY(100vh) rotate(0deg); }} 100% {{ transform: translateY(-150px) rotate(360deg); }} }}
+            body {{
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                font-family: 'Poor Story', 'Jua', sans-serif;
+                background: #fff7ed;
+                height: 100vh;
+                position: relative;
+            }}
+            .fixed-header {{
+                position: fixed;
+                top: 20px;
+                width: 100%;
+                text-align: center;
+                font-size: 28px;
+                font-weight: bold;
+                z-index: 20;
+                color: #333;
+            }}
+            .form-box {{
+                background: rgba(255,255,255,0.95);
+                padding: 40px 30px;
+                border-radius: 30px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                text-align: center;
+                width: 90%;
+                max-width: 400px;
+                z-index: 10;
+                position: relative;
+                top: 80px;
+                margin: 0 auto;
+            }}
+            input, select, button {{
+                width: 100%;
+                padding: 12px;
+                margin-top: 12px;
+                font-size: 16px;
+                border-radius: 20px;
+                border: none;
+            }}
+            button {{
+                background-color: #ff9caa;
+                color: white;
+                font-weight: bold;
+                cursor: pointer;
+            }}
+            .rotating-floating {{
+                position: absolute;
+                width: 60px;
+                opacity: 0.8;
+                pointer-events: none;
+            }}
+            /* 네 방향 애니메이션 keyframes */
+            @keyframes floatRotateBottomToTop {{
+                0% {{ transform: translateY(100vh) rotate(0deg); }}
+                100% {{ transform: translateY(-150px) rotate(360deg); }}
+            }}
+            @keyframes floatRotateTopToBottom {{
+                0% {{ transform: translateY(-150px) rotate(0deg); }}
+                100% {{ transform: translateY(100vh) rotate(360deg); }}
+            }}
+            @keyframes floatRotateLeftToRight {{
+                0% {{ transform: translateX(-150px) rotate(0deg); }}
+                100% {{ transform: translateX(100vw) rotate(360deg); }}
+            }}
+            @keyframes floatRotateRightToLeft {{
+                0% {{ transform: translateX(100vw) rotate(0deg); }}
+                100% {{ transform: translateX(-150px) rotate(360deg); }}
+            }}
         </style>
     </head>
     <body>
@@ -80,9 +140,9 @@ def home():
             </form>
         </div>
         <script>
+            // 이미 회원가입된 경우 바로 /result 페이지로 리다이렉트
             const saved = localStorage.getItem("userData");
             if (saved) {{
-                // 회원가입 정보가 이미 있으면, 오늘의 운세 페이지로 즉시 이동
                 const lastDate = localStorage.getItem("lastFortuneDate");
                 const today = "{today}";
                 if (lastDate === today) {{
@@ -91,13 +151,29 @@ def home():
                     location.href = "/result";
                 }}
             }}
-            for (let i = 0; i < 30; i++) {{
+            // 바둑판식으로 배치된 이미지 생성 (6열 x 5행)
+            const numCols = 6;
+            const numRows = 5;
+            const animations = [
+                "floatRotateBottomToTop",
+                "floatRotateTopToBottom",
+                "floatRotateLeftToRight",
+                "floatRotateRightToLeft"
+            ];
+            for (let i = 0; i < numCols * numRows; i++) {{
                 const img = document.createElement("img");
                 img.src = "/image.png";
                 img.className = "rotating-floating";
-                img.style.left = Math.random() * 100 + "%";
+                const col = i % numCols;
+                const row = Math.floor(i / numCols);
+                // 각 이미지를 그리드 좌표에 배치
+                img.style.left = (col * (100 / numCols)) + "%";
+                img.style.top = (row * (100 / numRows)) + "%";
                 img.style.zIndex = 1;
-                img.style.animationDuration = (15 + Math.random() * 15) + "s";
+                // 무작위 애니메이션 선택 및 지속시간/딜레이 적용
+                const animationChoice = animations[Math.floor(Math.random() * animations.length)];
+                const duration = 15 + Math.random() * 15;
+                img.style.animation = animationChoice + " " + duration + "s linear infinite";
                 img.style.animationDelay = Math.random() * 10 + "s";
                 document.body.appendChild(img);
             }}
@@ -108,7 +184,7 @@ def home():
 
 @app.route("/result")
 def result():
-    # 오늘의 운세 점수와 메세지 생성 스크립트
+    # 오늘의 운세 생성 스크립트
     script = """
         let saved = JSON.parse(localStorage.getItem("userData"));
         const today = new Date().toISOString().split('T')[0];
@@ -139,14 +215,77 @@ def result():
         <title>오늘의 운세</title>
         <link href="https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap" rel="stylesheet">
         <style>
-            body {{ margin: 0; padding: 0; overflow: hidden; font-family: 'Poor Story', 'Jua', sans-serif; background: #fff7ed; height: 100vh; position: relative; }}
-            .fixed-header {{ position: fixed; top: 20px; width: 100%; text-align: center; font-size: 28px; font-weight: bold; z-index: 20; color: #333; }}
-            .fortune-box {{ background: rgba(255,255,255,0.95); padding: 40px 30px; border-radius: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; width: 90%; max-width: 400px; z-index: 10; position: relative; top: 100px; margin: 0 auto; }}
-            .fortune-box h2 {{ font-size: 20px; color: #999; margin-bottom: 10px; }}
-            .fortune-box h3 {{ font-size: 24px; color: #aa5c5c; margin-bottom: 12px; }}
-            .fortune-box p {{ font-size: 20px; color: #5c5c5c; margin: 10px 0; line-height: 1.6; }}
-            .rotating-floating {{ position: absolute; width: 60px; opacity: 0.8; pointer-events: none; animation: floatRotate linear infinite; }}
-            @keyframes floatRotate {{ 0% {{ transform: translateY(100vh) rotate(0deg); }} 100% {{ transform: translateY(-150px) rotate(360deg); }} }}
+            body {{
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                font-family: 'Poor Story', 'Jua', sans-serif;
+                background: #fff7ed;
+                height: 100vh;
+                position: relative;
+            }}
+            .fixed-header {{
+                position: fixed;
+                top: 20px;
+                width: 100%;
+                text-align: center;
+                font-size: 28px;
+                font-weight: bold;
+                z-index: 20;
+                color: #333;
+            }}
+            .fortune-box {{
+                background: rgba(255,255,255,0.95);
+                padding: 40px 30px;
+                border-radius: 30px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                text-align: center;
+                width: 90%;
+                max-width: 400px;
+                z-index: 10;
+                position: relative;
+                top: 100px;
+                margin: 0 auto;
+            }}
+            .fortune-box h2 {{
+                font-size: 20px;
+                color: #999;
+                margin-bottom: 10px;
+            }}
+            .fortune-box h3 {{
+                font-size: 24px;
+                color: #aa5c5c;
+                margin-bottom: 12px;
+            }}
+            .fortune-box p {{
+                font-size: 20px;
+                color: #5c5c5c;
+                margin: 10px 0;
+                line-height: 1.6;
+            }}
+            .rotating-floating {{
+                position: absolute;
+                width: 60px;
+                opacity: 0.8;
+                pointer-events: none;
+            }}
+            /* 네 방향 애니메이션 keyframes */
+            @keyframes floatRotateBottomToTop {{
+                0% {{ transform: translateY(100vh) rotate(0deg); }}
+                100% {{ transform: translateY(-150px) rotate(360deg); }}
+            }}
+            @keyframes floatRotateTopToBottom {{
+                0% {{ transform: translateY(-150px) rotate(0deg); }}
+                100% {{ transform: translateY(100vh) rotate(360deg); }}
+            }}
+            @keyframes floatRotateLeftToRight {{
+                0% {{ transform: translateX(-150px) rotate(0deg); }}
+                100% {{ transform: translateX(100vw) rotate(360deg); }}
+            }}
+            @keyframes floatRotateRightToLeft {{
+                0% {{ transform: translateX(100vw) rotate(0deg); }}
+                100% {{ transform: translateX(-150px) rotate(360deg); }}
+            }}
         </style>
     </head>
     <body>
@@ -159,13 +298,27 @@ def result():
         </div>
         <script>
             {script}
-            for (let i = 0; i < 30; i++) {{
+            // 바둑판식으로 배치된 이미지 생성 (6열 x 5행)
+            const numCols = 6;
+            const numRows = 5;
+            const animations = [
+                "floatRotateBottomToTop",
+                "floatRotateTopToBottom",
+                "floatRotateLeftToRight",
+                "floatRotateRightToLeft"
+            ];
+            for (let i = 0; i < numCols * numRows; i++) {{
                 const img = document.createElement("img");
                 img.src = "/image.png";
                 img.className = "rotating-floating";
-                img.style.left = Math.random() * 100 + "%";
+                const col = i % numCols;
+                const row = Math.floor(i / numCols);
+                img.style.left = (col * (100 / numCols)) + "%";
+                img.style.top = (row * (100 / numRows)) + "%";
                 img.style.zIndex = 1;
-                img.style.animationDuration = (15 + Math.random() * 15) + "s";
+                const animationChoice = animations[Math.floor(Math.random() * animations.length)];
+                const duration = 15 + Math.random() * 15;
+                img.style.animation = animationChoice + " " + duration + "s linear infinite";
                 img.style.animationDelay = Math.random() * 10 + "s";
                 document.body.appendChild(img);
             }}
