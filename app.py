@@ -80,7 +80,7 @@ def greeting():
         </style>
     </head>
     <body>
-        <!-- 중앙에 2배 크기의 이미지 (말하는 듯한 효과를 줄 예정) -->
+        <!-- 중앙에 2배 크기의 이미지 -->
         <img src="/image.png" class="central-image" alt="중앙 이미지">
         <!-- 말풍선 (타이핑 애니메이션) -->
         <div class="speech-bubble" id="speechBubble"></div>
@@ -101,7 +101,7 @@ def greeting():
                 }}
             }}
             typeText();
-            // "부탁해!" 버튼 클릭 시, localStorage에 회원가입 정보가 있으면 /result, 없으면 /home으로 이동
+            // "부탁해!" 버튼 클릭 시, 회원가입 정보가 있으면 /result, 없으면 /home으로 이동
             document.getElementById("actionButton").onclick = function() {{
                 const userData = localStorage.getItem("userData");
                 if (userData) {{
@@ -215,7 +215,7 @@ def home():
               width: 60px;
               opacity: 0.8;
               pointer-events: none;
-              z-index: -1; /* 항상 뒤쪽에 있도록 */
+              z-index: -1; /* 항상 뒤쪽에 */
           }}
           /* 네 방향 애니메이션 keyframes */
           @keyframes floatRotateBottomToTop {{
@@ -410,7 +410,7 @@ def result():
               width: 60px;
               opacity: 0.8;
               pointer-events: none;
-              z-index: -1; /* background */
+              z-index: -1; /* 항상 배경에 위치 */
           }}
           @keyframes floatRotateBottomToTop {{
               0% {{ transform: translateY(100vh) rotate(0deg); }}
@@ -458,7 +458,7 @@ def result():
            }}
            typeGreeting();
            {script}
-           // flying image.png 생성 (6열 x 5행, 즉시 시작, z-index -1)
+           // flying image.png 생성 (배경, 즉시 시작)
            const numCols = 6;
            const numRows = 5;
            const animations = [
