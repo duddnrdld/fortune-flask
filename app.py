@@ -52,7 +52,7 @@ def home():
         <link href="https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap" rel="stylesheet">
         <style>
             body {{
-                margin: 0;
+                margin: 20;
                 padding: 0;
                 overflow: hidden;
                 font-family: 'Poor Story', 'Jua', sans-serif;
@@ -179,6 +179,7 @@ def home():
                 }}
             }}
             // 바둑판식 배치의 배경 이미지 생성 (6열 x 5행), animationDelay 0s, z-index 0로 설정
+            z-index 0;
             const numCols = 6;
             const numRows = 5;
             const animations = [
@@ -259,7 +260,7 @@ def result():
         <link href="https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap" rel="stylesheet">
         <style>
             body {{
-                margin: 0;
+                margin: 20;
                 padding: 0;
                 overflow: hidden;
                 font-family: 'Poor Story', 'Jua', sans-serif;
