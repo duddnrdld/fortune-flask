@@ -179,7 +179,6 @@ def home():
                 }}
             }}
             // 바둑판식 배치의 배경 이미지 생성 (6열 x 5행), animationDelay 0s, z-index 0로 설정
-            z-index 0;
             const numCols = 6;
             const numRows = 5;
             const animations = [
@@ -190,7 +189,7 @@ def home():
             ];
             for (let i = 0; i < numCols * numRows; i++) {{
                 const img = document.createElement("img");
-                img.src = "/image.png";
+                background img.src = "/image.png";
                 img.className = "rotating-floating";
                 const col = i % numCols;
                 const row = Math.floor(i / numCols);
@@ -289,7 +288,7 @@ def result():
             }}
             .fortune-box {{
                 background: rgba(255,255,255,0.95);
-                padding: 40px 30px;
+                padding: 40px 70px;
                 border-radius: 30px;
                 box-shadow: 0 4px 20px rgba(0,0,0,0.1);
                 text-align: center;
@@ -380,7 +379,7 @@ def result():
             ];
             for (let i = 0; i < numCols * numRows; i++) {{
                 const img = document.createElement("img");
-                img.src = "/image.png";
+                background img.src = "/image.png";
                 img.className = "rotating-floating";
                 const col = i % numCols;
                 const row = Math.floor(i / numCols);
